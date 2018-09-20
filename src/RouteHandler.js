@@ -4,7 +4,7 @@ import Helmet from 'react-helmet';
 import { isExperienceEditorActive, dataApi } from '@sitecore-jss/sitecore-jss-react';
 import SitecoreContextFactory from './lib/SitecoreContextFactory';
 import config from './temp/config';
-import Layout from './Layout';
+import { Layout } from './Layout';
 import NotFound from './NotFound';
 
 // Dynamic route handler for Sitecore items.

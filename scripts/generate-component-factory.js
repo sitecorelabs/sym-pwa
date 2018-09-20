@@ -52,23 +52,27 @@ function writeComponentFactory() {
 
 function generateComponentFactory() {
   // by convention, we expect to find React components
-  // * under /src/components/ComponentName
-  // * with an index.js under the folder to define the component
-  // If you'd like to use your own convention, encode it below.
-  // NOTE: generating the component factory is also totally optional,
-  // and it can be maintained manually if preferred.
+  // * under /src/components
+  // * with a .js extension to define a component file
 
   const imports = [];
   const registrations = [];
 
-  fs.readdirSync(componentRootPath).forEach((componentFolder) => {
-    if (!fs.existsSync(path.join(componentRootPath, componentFolder, 'index.js'))) return;
+  const componentFiles = extractJsFiles(componentRootPath);
 
-    const importVarName = componentFolder.replace(/[^\w]+/g, '');
+  componentFiles.forEach((componentFile) => {
+    if (!fs.existsSync(componentFile)) return;
 
-    console.debug(`Registering JSS component ${componentFolder}`);
-    imports.push(`import ${importVarName} from '../components/${componentFolder}';`);
-    registrations.push(`components.set('${componentFolder}', ${importVarName});`);
+    console.debug(`Registering JSS component ${componentFile}`);
+    const componentName = path.basename(componentFile, '.js');
+    const importVarName = componentName.replace(/[^\w]+/g, '');
+    imports.push(
+      `import { ${importVarName} } from '../components/${componentFile
+        .replace(path.join(componentRootPath, '/'), '')
+        .replace(/\\/g, '/')
+        .replace('.vue', '')}';`
+    );
+    registrations.push(`components.set('${componentName}', ${importVarName});`);
   });
 
   return `/* eslint-disable */
@@ -83,4 +87,27 @@ export default function componentFactory(componentName) {
   return components.get(componentName);
 };
 `;
+}
+
+/**
+ * Recursively iterates the given folderPath, creating a flat array of found .js file paths.
+ * For example, given the following folder structure and using `/components` as the root folderPath:
+ * /components/component0.js
+ * /components/subfolder/component1.js
+ *
+ * The output would be:
+ * ['component0.js', 'subfolder/component1.js']
+ */
+function extractJsFiles(folderPath) {
+  let results = [];
+  fs.readdirSync(folderPath).forEach((pathName) => {
+    const computedPath = path.join(folderPath, pathName);
+    const stat = fs.statSync(computedPath);
+    if (stat && stat.isDirectory()) {
+      results = results.concat(extractJsFiles(computedPath));
+    } else if (path.extname(computedPath).toLowerCase() === '.js') {
+      results.push(computedPath);
+    }
+  });
+  return results;
 }

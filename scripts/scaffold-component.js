@@ -13,8 +13,14 @@ const chalk = require('chalk');
 /*
   SCAFFOLDING SCRIPT
 */
-const componentName = process.argv[2];
+const componentNameOrPath = process.argv[2];
+if (!componentNameOrPath) {
+  throw 'Component name was not passed. Usage: jss scaffold <componentName>';
+}
 
+const parsedComponentPath = path.parse(componentNameOrPath);
+
+const componentName = parsedComponentPath.name;
 if (!componentName) {
   throw 'Component name was not passed. Usage: jss scaffold <componentName>';
 }
@@ -24,7 +30,7 @@ if (!/^[A-Z][A-Za-z0-9-]+$/.test(componentName)) {
 }
 
 const componentManifestDefinitionsPath = 'sitecore/definitions/components';
-const componentRootPath = 'src/components';
+const componentRootPath = path.join('src/components', parsedComponentPath.dir);
 
 let manifestOutputPath = null;
 
@@ -76,25 +82,25 @@ function scaffoldComponent() {
   const componentTemplate = `import React from 'react';
 import { Text } from '@sitecore-jss/sitecore-jss-react';
 
-const ${exportVarName} = (props) => (
+export const ${exportVarName} = (props) => (
   <div>
     <p>${componentName} Component</p>
     <Text field={props.fields.heading} />
   </div>
 );
 
-export default ${exportVarName};
 `;
 
-  const outputDirectoryPath = path.join(componentRootPath, componentName);
+  const outputDirectoryPath = componentRootPath;
 
-  if (fs.existsSync(outputDirectoryPath)) {
-    throw `Component path ${outputDirectoryPath} already existed. Not creating component.`;
+  if (!fs.existsSync(outputDirectoryPath)) {
+    fs.mkdirSync(outputDirectoryPath);
   }
 
-  fs.mkdirSync(outputDirectoryPath);
-
-  const outputFilePath = path.join(outputDirectoryPath, 'index.js');
+  const outputFilePath = path.join(outputDirectoryPath, componentName + '.js');
+  if (fs.existsSync(outputFilePath)) {
+    throw `Component path ${outputFilePath} already existed. Not creating component.`;
+  }
 
   fs.writeFileSync(outputFilePath, componentTemplate, 'utf8');
 
