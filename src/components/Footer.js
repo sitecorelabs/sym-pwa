@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { Row, Column } from 'react-rasta';
 import { media } from '../styleHelpers';
 import { Container } from './shared/Container';
-import { Button } from './shared/Button';
 import bg03 from '../assets/bg03.png';
 import bg02 from '../assets/bg02.png';
 
@@ -21,37 +20,37 @@ export const Footer = (props) => {
                 <h2>Filler Links</h2>
                 <ul className="divided">
                   <li>
-                    <a href="#">Quam turpis feugiat dolor</a>
+                    <a href="/">Quam turpis feugiat dolor</a>
                   </li>
                   <li>
-                    <a href="#">Amet ornare in hendrerit </a>
+                    <a href="/">Amet ornare in hendrerit </a>
                   </li>
                   <li>
-                    <a href="#">Semper mod quisturpis nisi</a>
+                    <a href="/">Semper mod quisturpis nisi</a>
                   </li>
                   <li>
-                    <a href="#">Consequat etiam phasellus</a>
+                    <a href="/">Consequat etiam phasellus</a>
                   </li>
                   <li>
-                    <a href="#">Amet turpis, feugiat et</a>
+                    <a href="/">Amet turpis, feugiat et</a>
                   </li>
                   <li>
-                    <a href="#">Ornare hendrerit lectus</a>
+                    <a href="/">Ornare hendrerit lectus</a>
                   </li>
                   <li>
-                    <a href="#">Semper mod quis et dolore</a>
+                    <a href="/">Semper mod quis et dolore</a>
                   </li>
                   <li>
-                    <a href="#">Amet ornare in hendrerit</a>
+                    <a href="/">Amet ornare in hendrerit</a>
                   </li>
                   <li>
-                    <a href="#">Consequat lorem phasellus</a>
+                    <a href="/">Consequat lorem phasellus</a>
                   </li>
                   <li>
-                    <a href="#">Amet turpis, feugiat amet</a>
+                    <a href="/">Amet turpis, feugiat amet</a>
                   </li>
                   <li>
-                    <a href="#">Semper mod quisturpis</a>
+                    <a href="/">Semper mod quisturpis</a>
                   </li>
                 </ul>
               </section>
@@ -61,16 +60,16 @@ export const Footer = (props) => {
                 <h2>More Filler</h2>
                 <ul className="divided">
                   <li>
-                    <a href="#">Quam turpis feugiat dolor</a>
+                    <a href="/">Quam turpis feugiat dolor</a>
                   </li>
                   <li>
-                    <a href="#">Amet ornare in in lectus</a>
+                    <a href="/">Amet ornare in in lectus</a>
                   </li>
                   <li>
-                    <a href="#">Semper mod sed tempus nisi</a>
+                    <a href="/">Semper mod sed tempus nisi</a>
                   </li>
                   <li>
-                    <a href="#">Consequat etiam phasellus</a>
+                    <a href="/">Consequat etiam phasellus</a>
                   </li>
                 </ul>
               </section>
@@ -79,16 +78,16 @@ export const Footer = (props) => {
                 <h2>Even More Filler</h2>
                 <ul className="divided">
                   <li>
-                    <a href="#">Quam turpis feugiat dolor</a>
+                    <a href="/">Quam turpis feugiat dolor</a>
                   </li>
                   <li>
-                    <a href="#">Amet ornare hendrerit lectus</a>
+                    <a href="/">Amet ornare hendrerit lectus</a>
                   </li>
                   <li>
-                    <a href="#">Semper quisturpis nisi</a>
+                    <a href="/">Semper quisturpis nisi</a>
                   </li>
                   <li>
-                    <a href="#">Consequat lorem phasellus</a>
+                    <a href="/">Consequat lorem phasellus</a>
                   </li>
                 </ul>
               </section>
@@ -106,7 +105,7 @@ export const Footer = (props) => {
                   licensed so use it for any personal or commercial project (just credit us for the
                   design!).
                 </p>
-                <a href="#" className="button alt icon fa-arrow-circle-right">
+                <a href="/" className="button alt icon fa-arrow-circle-right">
                   Learn More
                 </a>
               </section>
@@ -118,19 +117,19 @@ export const Footer = (props) => {
                     <dl className="contact">
                       <dt>Twitter</dt>
                       <dd>
-                        <a href="#">@untitled-corp</a>
+                        <a href="/">@untitled-corp</a>
                       </dd>
                       <dt>Facebook</dt>
                       <dd>
-                        <a href="#">facebook.com/untitled</a>
+                        <a href="/">facebook.com/untitled</a>
                       </dd>
                       <dt>WWW</dt>
                       <dd>
-                        <a href="#">untitled.tld</a>
+                        <a href="/">untitled.tld</a>
                       </dd>
                       <dt>Email</dt>
                       <dd>
-                        <a href="#">user@untitled.tld</a>
+                        <a href="/">user@untitled.tld</a>
                       </dd>
                     </dl>
                   </Column>
@@ -168,7 +167,9 @@ export const Footer = (props) => {
   );
 };
 
-Footer.propTypes = {};
+Footer.propTypes = {
+  rendering: PropTypes.object,
+};
 
 function getStyledComponents() {
   const FooterWrapper = styled.div`

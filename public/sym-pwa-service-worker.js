@@ -28,9 +28,34 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute('/index.html', {
-  blacklist: [/^\/__/, /\/[^\/]+.[^\/]+$/],
-});
+// workbox.routing.registerNavigationRoute('/', {
+//   blacklist: [/^\/__/, /\/[^\/]+.[^\/]+$/],
+// });
+
+// Cache the Google Fonts stylesheets with a stale while revalidate strategy.
+workbox.routing.registerRoute(
+  /^https:\/\/fonts\.googleapis\.com/,
+  workbox.strategies.staleWhileRevalidate({
+    cacheName: 'google-fonts-stylesheets',
+  })
+);
+
+// Cache the Google Fonts webfont files with a cache first strategy for 1 year.
+workbox.routing.registerRoute(
+  /^https:\/\/fonts\.gstatic\.com/,
+  workbox.strategies.cacheFirst({
+    cacheName: 'google-fonts-webfonts',
+    plugins: [
+      new workbox.cacheableResponse.Plugin({
+        statuses: [0, 200],
+      }),
+      new workbox.expiration.Plugin({
+        maxAgeSeconds: 60 * 60 * 24 * 365,
+        maxEntries: 30,
+      }),
+    ],
+  })
+);
 
 // The following plugin is for use with the stale-while-revalidate strategy that we'll
 // use for caching Layout Service responses.
@@ -71,6 +96,7 @@ const postMessagePlugin = {
 // https://developers.google.com/web/tools/workbox/modules/workbox-strategies#stale-while-revalidate
 const layoutServiceStrategy = workbox.strategies.staleWhileRevalidate({
   plugins: [postMessagePlugin],
+  cacheName: 'sitecore-layout-service',
 });
 
 // We need to register the Layout Service route pattern to ensure the service worker caches
@@ -85,5 +111,15 @@ workbox.routing.registerRoute(
     return url.href.toLowerCase().indexOf('/sitecore/api/layout') !== -1;
   },
   layoutServiceStrategy,
+  'GET'
+);
+
+workbox.routing.registerRoute(
+  ({ url }) => {
+    return url.href.toLowerCase().indexOf('/-/jssmedia') !== -1;
+  },
+  workbox.strategies.staleWhileRevalidate({
+    cacheName: 'sitecore-media',
+  }),
   'GET'
 );

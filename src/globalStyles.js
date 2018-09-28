@@ -5,7 +5,7 @@ import { media } from './styleHelpers';
 export const themeStyles = {
   main: {
     fontFamily: `'Open Sans', sans-serif`,
-    color: '#7b818c',
+    color: '#696969',
     fontWeight: 400,
     fontSize: {
       xlarge: '11pt',

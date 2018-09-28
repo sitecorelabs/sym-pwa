@@ -26,6 +26,7 @@ const styleVariant = (props) => {
         background-position: top center, bottom center, top left;
       `;
     }
+    default:
     case 'style2': {
       return '';
     }

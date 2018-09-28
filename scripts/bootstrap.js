@@ -1,5 +1,7 @@
 const configGenerator = require('./generate-config');
 
+console.log('SW_DIR', process.env.SW_DIR);
+
 /*
   BOOTSTRAPPING
   The bootstrap process runs before build, and generates JS that needs to be
@@ -14,7 +16,12 @@ const disconnected = process.argv.some((arg) => arg === '--disconnected');
   Generates the /src/temp/config.js file which contains runtime configuration
   that the app can import and use.
 */
-const configOverride = disconnected ? { sitecoreApiHost: 'http://localhost:3000' } : null;
+const configOverride = disconnected ? { sitecoreApiHost: 'http://localhost:3000' } : {};
+
+if (process.env.SW_DIR) {
+  configOverride.serviceWorkerDir = process.env.SW_DIR;
+  configOverride.sitecoreApiHost = 'https://sym-pwa.ngrok.io';
+}
 configGenerator(configOverride);
 
 /*

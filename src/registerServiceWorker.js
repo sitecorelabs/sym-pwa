@@ -1,12 +1,4 @@
-// In production, we register a service worker to serve assets from local cache.
-
-// This lets the app load faster on subsequent visits in production, and gives
-// it offline capabilities. However, it also means that developers (and users)
-// will only see deployed updates on the "N+1" visit to a page, since previously
-// cached resources are updated in the background.
-
-// To learn more about the benefits of this model, read https://goo.gl/KwvDNy.
-// This link also includes instructions on opting out of this behavior.
+import config from './temp/config';
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
@@ -28,7 +20,16 @@ export default function register() {
     }
 
     window.addEventListener('load', () => {
-      const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+      // When deploying a JSS app to Sitecore, we copy the service worker file to the root Sitecore site folder.
+      // When running disconnected or connected locally, the service worker file lives in the PUBLIC_URL folder.
+      // Therefore, we allow build scripts to set a SW_DIR variable to specify where a service worker lives.
+      // The SW_DIR variable is added to the generated app config at `config.serviceWorkerDir`.
+      // If no serviceWorkerDir value is specified, then default to PUBLIC_URL.
+      let swDir = config.serviceWorkerDir || process.env.PUBLIC_URL;
+      if (swDir === '/') {
+        swDir = '';
+      }
+      const swUrl = `${swDir}/sym-pwa-service-worker.js`;
 
       if (isLocalhost) {
         // This is running on localhost. Lets check if a service worker still exists or not.

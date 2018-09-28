@@ -3,13 +3,17 @@ const { rewireWorkboxInject, defaultInjectConfig } = require('react-app-rewire-w
 const rewireStyledComponents = require('react-app-rewire-styled-components');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const errorOverlayMiddleware = require('react-dev-utils/errorOverlayMiddleware');
+const packageConfig = require('./package.json');
 
 module.exports = {
   // The webpack config to use when compiling your react app for development or production.
   webpack: (config, env) => {
     // if (env === "production") {
     console.log('Production build - Adding Workbox for PWAs');
-    const workboxConfig = { ...defaultInjectConfig, swSrc: './public/service-worker.js' };
+    const workboxConfig = {
+      ...defaultInjectConfig,
+      swSrc: `./public/${packageConfig.config.appName}-service-worker.js`,
+    };
     const rewireWorkboxConfig = rewireWorkboxInject(workboxConfig)(config, env);
 
     const rewireStyledComponentsConfig = rewireStyledComponents(rewireWorkboxConfig, env, {

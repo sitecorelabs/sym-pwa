@@ -20,10 +20,9 @@ export class ServiceWorkerNotifications extends React.Component {
             message: (
               <div>
                 The content for this route has been updated.
-                <a onClick={this.reloadContent} href="#">
-                  click here
-                </a>
-                to load the new content.
+                <button type="button" onClick={this.reloadContent}>
+                  Load new content.
+                </button>
               </div>
             ),
           });

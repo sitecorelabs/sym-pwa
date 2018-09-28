@@ -40,7 +40,10 @@ export const FeatureThreeColumn = (props) => {
   );
 };
 
-FeatureThreeColumn.propTypes = {};
+FeatureThreeColumn.propTypes = {
+  rendering: PropTypes.object,
+  fields: PropTypes.object,
+};
 
 function getStyledComponents() {
   const StyledRow = styled(Row)`

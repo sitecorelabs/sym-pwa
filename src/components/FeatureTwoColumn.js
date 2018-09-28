@@ -23,7 +23,9 @@ export const FeatureTwoColumn = (props) => {
   );
 };
 
-FeatureTwoColumn.propTypes = {};
+FeatureTwoColumn.propTypes = {
+  rendering: PropTypes.object,
+};
 
 function getStyledComponents() {
   const StyledRow = styled(Row)`

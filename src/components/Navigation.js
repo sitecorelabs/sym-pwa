@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import { translate } from 'react-i18next';
 import { media } from '../styleHelpers';
 
 const navData = [
@@ -14,12 +13,11 @@ const navData = [
 
 const { StyledNav, StyledMobileNav } = getStyledComponents();
 
-class TranslatedNavigation extends React.Component {
+export class Navigation extends React.Component {
   static displayName = 'Navigation';
 
   static propTypes = {
     mobile: PropTypes.bool,
-    t: PropTypes.func,
   };
 
   static defaultProps = {
@@ -33,7 +31,7 @@ class TranslatedNavigation extends React.Component {
   renderListItem = (navItem, index) => {
     return (
       <li key={`listItem${index}`}>
-        <NavLink to={navItem.url}>{this.props.t(navItem.title)}</NavLink>
+        <NavLink to={navItem.url}>{navItem.title}</NavLink>
         {navItem.children && navItem.children.length > 0
           ? this.renderUnorderedList(navItem.children)
           : null}
@@ -46,7 +44,7 @@ class TranslatedNavigation extends React.Component {
       return (
         <React.Fragment key={`navLink${index}`}>
           <NavLink className={`depth-${depth}`} to={navItem.url}>
-            {this.props.t(navItem.title)}
+            {navItem.title}
           </NavLink>
           {navItem.children && navItem.children.length > 0
             ? this.renderLinkList(navItem.children, depth + 1)
@@ -64,12 +62,6 @@ class TranslatedNavigation extends React.Component {
     );
   }
 }
-
-// inject dictionary props (`t`) into navigation so we can translate it
-// NOTE: using this is needed instead of using i18next directly to keep
-// the component state updated when i18n state (e.g. current language) changes
-
-export const Navigation = translate()(TranslatedNavigation);
 
 function getStyledComponents() {
   const StyledNav = styled.nav`

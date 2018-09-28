@@ -5,7 +5,6 @@ import AppRoot from './AppRoot';
 import { setServerSideRenderingState } from './RouteHandler';
 import GraphQLClientFactory from './lib/GraphQLClientFactory';
 import config from './temp/config';
-import i18ninit from './i18n';
 import registerServiceWorker from './registerServiceWorker';
 
 /* eslint-disable no-underscore-dangle */
@@ -47,20 +46,12 @@ const graphQLClient = GraphQLClientFactory(config.graphQLEndpoint, false, initia
 /*
   App Rendering
 */
-// initialize the dictionary, then render the app
-// note: if not making a multlingual app, the dictionary init can be removed.
-i18ninit().then(() => {
-  // HTML element to place the app into
-  const rootElement = document.getElementById('root');
+// HTML element to place the app into
+const rootElement = document.getElementById('root');
 
-  renderFunction(
-    <AppRoot
-      path={window.location.pathname}
-      Router={BrowserRouter}
-      graphQLClient={graphQLClient}
-    />,
-    rootElement
-  );
+renderFunction(
+  <AppRoot path={window.location.pathname} Router={BrowserRouter} graphQLClient={graphQLClient} />,
+  rootElement
+);
 
-  registerServiceWorker();
-});
+registerServiceWorker();

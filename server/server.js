@@ -3,9 +3,9 @@ import React from 'react';
 import { StaticRouter, matchPath } from 'react-router-dom';
 import { renderToStringWithData } from 'react-apollo';
 import Helmet from 'react-helmet';
+import { ServerStyleSheet } from 'styled-components';
 import GraphQLClientFactory from '../src/lib/GraphQLClientFactory';
 import config from '../src/temp/config';
-import i18ninit from '../src/i18n';
 import AppRoot, { routePatterns } from '../src/AppRoot';
 import { setServerSideRenderingState } from '../src/RouteHandler';
 import indexTemplate from '../build/index.html';
@@ -35,16 +35,17 @@ export function renderView(callback, path, data, viewBag) {
     /*
       App Rendering
     */
-    initializei18n(state)
-      .then(() =>
-        // renderToStringWithData() allows any GraphQL queries to complete their async call
-        // before the SSR result is returned, so that the resulting HTML from GQL query results
-        // is included in the SSR'ed markup instead of whatever the 'loading' state is.
-        // Not using GraphQL? Use ReactDOMServer.renderToString() instead.
-        renderToStringWithData(
-          <AppRoot path={path} Router={StaticRouter} graphQLClient={graphQLClient} />
-        )
+
+    const styleSheet = new ServerStyleSheet();
+    // renderToStringWithData() allows any GraphQL queries to complete their async call
+    // before the SSR result is returned, so that the resulting HTML from GQL query results
+    // is included in the SSR'ed markup instead of whatever the 'loading' state is.
+    // Not using GraphQL? Use ReactDOMServer.renderToString() instead.
+    renderToStringWithData(
+      styleSheet.collectStyles(
+        <AppRoot path={path} Router={StaticRouter} graphQLClient={graphQLClient} />
       )
+    )
       .then((renderedAppHtml) => {
         const helmet = Helmet.renderStatic();
 
@@ -71,7 +72,7 @@ export function renderView(callback, path, data, viewBag) {
           // render <head> contents from react-helmet
           .replace(
             '<head>',
-            `<head>${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}`
+            `<head>${helmet.title.toString()}${helmet.meta.toString()}${helmet.link.toString()}${styleSheet.getStyleTags()}`
           );
 
         callback(null, { html });
@@ -121,11 +122,4 @@ function parseServerData(data, viewBag) {
     viewBag: parsedViewBag,
     sitecore: parsedData && parsedData.sitecore,
   };
-}
-
-function initializei18n(state) {
-  // don't init i18n for not found routes
-  if (!state || !state.sitecore || !state.sitecore.context) return Promise.resolve();
-
-  return i18ninit(state.sitecore.context.language, state.viewBag.dictionary);
 }

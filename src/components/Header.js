@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { Bars } from 'styled-icons/fa-solid';
 import { Placeholder } from '@sitecore-jss/sitecore-jss-react';
+import { Link as RouterLink } from 'react-router-dom';
 
-import { media } from '../styleHelpers';
+import { media, breakpoints } from '../styleHelpers';
 import { Navigation } from './Navigation';
 import { Container } from './shared/Container';
 import { ServiceWorkerNotifications } from '../ServiceWorkerNotifications';
@@ -28,7 +29,7 @@ export class Header extends React.Component {
           <LargeHeader>
             <div className="inner">
               <h1>
-                <a href="/">{`//* Solutions`}</a>
+                <RouterLink to="/">{`//* Solutions`}</RouterLink>
               </h1>
               <Navigation {...otherProps} />
             </div>
@@ -41,26 +42,48 @@ export class Header extends React.Component {
             */}
             {typeof window !== 'undefined'
               ? ReactDOM.createPortal(
-                  <TitleBar navPanelVisible={navPanelVisible} navPanelWidth={navPanelWidth}>
-                    <button className="toggle" onClick={onNavPanelToggleClick}>
-                      <Bars size={18} />
-                    </button>
-                    <span className="title">Whack Whack Star Solutions</span>
-                  </TitleBar>,
+                  <React.Fragment>
+                    <style type="text/css">
+                      {TitleBar({
+                        navPanelVisible,
+                        navPanelWidth,
+                      })}
+                    </style>
+                    <section className="header-title-bar">
+                      <button
+                        className="toggle"
+                        onClick={onNavPanelToggleClick}
+                        aria-label="Toggle Navigation Menu"
+                      >
+                        <Bars size={18} />
+                      </button>
+                      <span className="title">Whack Whack Star Solutions</span>
+                    </section>
+                  </React.Fragment>,
                   document.querySelector('body')
                 )
               : null}
             {typeof window !== 'undefined'
               ? ReactDOM.createPortal(
-                  <NavPanel visible={navPanelVisible} width={navPanelWidth}>
-                    <Navigation {...otherProps} mobile />
-                  </NavPanel>,
+                  <React.Fragment>
+                    <style type="text/css">
+                      {NavPanel({
+                        visible: navPanelVisible,
+                        width: navPanelWidth,
+                      })}
+                    </style>
+                    <section className="nav-panel-mobile">
+                      <Navigation {...otherProps} mobile />
+                    </section>
+                  </React.Fragment>,
                   document.querySelector('body')
                 )
               : null}
           </SmallHeader>
           <ServiceWorkerNotifications />
-          <Placeholder name="jss-header-banner" rendering={otherProps.route} />
+          {otherProps.route.name === 'home' ? (
+            <Placeholder name="jss-header-banner" rendering={otherProps.route} />
+          ) : null}
         </Container>
       </StyledHeaderWrapper>
     );
@@ -122,24 +145,33 @@ function getStyledComponents() {
     ${media.medium.down`display:none;`};
   `;
 
-  components.TitleBar = styled.div`
-    backface-visibility: hidden;
-    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.35)), url(${bg02});
-    transition: transform 0.5s ease;
-    ${(props) => (props.navPanelVisible ? `transform: translateX(${props.navPanelWidth}px)` : '')};
-    background-color: rgba(59, 62, 69, 0.9);
-    box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.5),
-      inset 0px 0px 0px 2px rgba(255, 255, 255, 0.075), 0px 1px 6px 0px rgba(0, 0, 0, 0.35);
-    display: block;
-    height: 44px;
-    left: 0;
-    position: fixed;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 1);
-    top: 0;
-    width: 100%;
-    z-index: 10001;
+  components.TitleBar = (props) => {
+    return `
+    .header-title-bar {
+      backface-visibility: hidden;
+      background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.35)), url(${bg02});
+      transition: transform 0.5s ease;
+      ${props.navPanelVisible ? `transform: translateX(${props.navPanelWidth}px);` : ''}
+      background-color: rgba(59, 62, 69, 0.9);
+      box-shadow: inset 0px 0px 0px 1px rgba(0, 0, 0, 0.5),
+        inset 0px 0px 0px 2px rgba(255, 255, 255, 0.075), 0px 1px 6px 0px rgba(0, 0, 0, 0.35);
+      display: block;
+      height: 44px;
+      left: 0;
+      position: fixed;
+      text-shadow: -1px -1px 0 rgba(0, 0, 0, 1);
+      top: 0;
+      width: 100%;
+      z-index: 10001;      
+    }
 
-    .title {
+    @media screen and (min-width: ${breakpoints.large}px) {
+      .header-title-bar {
+        display: none;
+      }
+    }
+
+    .header-title-bar .title {
       display: block;
       text-transform: uppercase;
       font-weight: 800;
@@ -149,7 +181,7 @@ function getStyledComponents() {
       text-align: center;
     }
 
-    .toggle {
+    .header-title-bar .toggle {
       position: absolute;
       left: 0;
       top: 0;
@@ -159,64 +191,69 @@ function getStyledComponents() {
       background: none;
       border: none;
       outline: none;
-      svg {
-        color: #fff;
-      }
-
-      &:active {
-        opacity: 0.5;
-      }
     }
 
-    ${media.large.up`display:none;`};
-  `;
-
-  components.NavPanel = styled.div`
-    backface-visibility: hidden;
-    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.35)), url(${bg01});
-    transform: translateX(${(props) => (props.visible ? 0 : -props.width)}px);
-    transition: transform 0.5s ease;
-    background-color: #303238;
-    box-shadow: inset -1px 0px 0px 0px rgba(0, 0, 0, 0.5),
-      inset -2px 0px 0px rgba(255, 255, 255, 0.15), inset -2px 0px 10px 0px rgba(0, 0, 0, 0.35);
-    display: block;
-    height: 100%;
-    left: 0;
-    overflow-y: auto;
-    position: fixed;
-    top: 0;
-    width: ${(props) => props.width}px;
-    z-index: 10002;
-
-    .indent-1 {
-      display: inline-block;
-      width: 1em;
+    .header-title-bar .toggle:active {
+      opacity: 0.5;
     }
 
-    .indent-2 {
-      display: inline-block;
-      width: 2em;
-    }
-
-    .indent-3 {
-      display: inline-block;
-      width: 3em;
-    }
-
-    .indent-4 {
-      display: inline-block;
-      width: 4em;
-    }
-
-    .indent-5 {
-      display: inline-block;
-      width: 5em;
-    }
-
-    .depth-0 {
+    .header-title-bar svg {
       color: #fff;
     }
   `;
+  };
+
+  components.NavPanel = (props) => {
+    const className = '.nav-panel-mobile';
+    return `
+      ${className} {
+        backface-visibility: hidden;
+        background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.35)), url(${bg01});
+        transform: translateX(${props.visible ? 0 : -props.width}px);
+        transition: transform 0.5s ease;
+        background-color: #303238;
+        box-shadow: inset -1px 0px 0px 0px rgba(0, 0, 0, 0.5),
+          inset -2px 0px 0px rgba(255, 255, 255, 0.15), inset -2px 0px 10px 0px rgba(0, 0, 0, 0.35);
+        display: block;
+        height: 100%;
+        left: 0;
+        overflow-y: auto;
+        position: fixed;
+        top: 0;
+        width: ${props.width}px;
+        z-index: 10002;
+      }
+
+      ${className} .indent-1 {
+        display: inline-block;
+        width: 1em;
+      }
+
+      ${className} .indent-2 {
+        display: inline-block;
+        width: 2em;
+      }
+
+      ${className} .indent-3 {
+        display: inline-block;
+        width: 3em;
+      }
+
+      ${className} .indent-4 {
+        display: inline-block;
+        width: 4em;
+      }
+
+      ${className} .indent-5 {
+        display: inline-block;
+        width: 5em;
+      }
+
+      ${className} .depth-0 {
+        color: #fff;
+      }
+    `;
+  };
 
   return components;
 }
