@@ -9,6 +9,7 @@ module.exports = {
   // The webpack config to use when compiling your react app for development or production.
   webpack: (config, env) => {
     // if (env === "production") {
+    console.log('env', env);
     console.log('Production build - Adding Workbox for PWAs');
     const workboxConfig = {
       ...defaultInjectConfig,
