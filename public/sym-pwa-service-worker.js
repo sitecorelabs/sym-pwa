@@ -9,6 +9,7 @@
 
 workbox.skipWaiting();
 workbox.clientsClaim();
+workbox.setConfig({ debug: true });
 
 // The precache manifest script that is generated and injected by webpack
 // exposes `self.__precacheManifest` as a variable.
@@ -28,9 +29,9 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-// workbox.routing.registerNavigationRoute('/', {
-//   blacklist: [/^\/__/, /\/[^\/]+.[^\/]+$/],
-// });
+workbox.routing.registerNavigationRoute('/dist/sym-pwa/index.html', {
+  blacklist: [/^\/__/],
+});
 
 // Cache the Google Fonts stylesheets with a stale while revalidate strategy.
 workbox.routing.registerRoute(
